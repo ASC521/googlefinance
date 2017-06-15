@@ -58,7 +58,7 @@ class Stock:
         end_date -- String representation of the closing historical date to retrive prices
 
         """
-
+# NEED TO MAKE DATE FORMAT CONSISTENT BETWEEN BOTH METHODS OF GETTING DATA
         if self.valid is True:
             historic_url = 'https://www.google.com/finance/historical?&q={0}&startdate={1}&enddate={2}&output=csv'.format(self.ticker, start_date, end_date)
             response_data = []
