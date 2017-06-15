@@ -67,7 +67,7 @@ class Stock:
                     page = response.read().decode('utf-8-sig').splitlines()
 
                 headers = page[0].split(',')
-                response_data.append(self._parse_historical_data(page[1:], headers, ','))
+                response_data = self._parse_historical_data(page[1:], headers, ',')
 
             except urllib.error.HTTPError:
 
@@ -83,7 +83,7 @@ class Stock:
                     text = table.text.split('\n\n')
                     headers = text[1].split('\n')
 
-                    response_data.append(self._parse_historical_data(text[2:], headers, '\n'))
+                    response_data = response_data + self._parse_historical_data(text[2:], headers, '\n')
 
                     if len(response_data) < 200:
                         more_data = False
