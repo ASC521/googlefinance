@@ -108,7 +108,8 @@ class Stock:
         soup = BeautifulSoup(page, 'html.parser')
 
         try:
-            company_name = soup.title[:soup.title.find(':')]
+            title = soup.title.text
+            company_name = title[:title.find(':')]
         except AttributeError:
             company_name = 'Company Name Unavailable'
 
