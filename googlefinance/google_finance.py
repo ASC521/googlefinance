@@ -127,11 +127,11 @@ class Stock:
             cell = row.split(delimiter)
             row_contents = {}
             row_contents[headers[0]] = datetime.strptime(cell[0], date_format)
-            row_contents[headers[1]] = cell[1]
-            row_contents[headers[2]] = cell[2]
-            row_contents[headers[3]] = cell[3]
-            row_contents[headers[4]] = cell[4]
-            row_contents[headers[5]] = cell[5]
+            row_contents[headers[1]] = cell[1].replace(',', '')
+            row_contents[headers[2]] = cell[2].replace(',', '')
+            row_contents[headers[3]] = cell[3].replace(',', '')
+            row_contents[headers[4]] = cell[4].replace(',', '')
+            row_contents[headers[5]] = cell[5].replace(',', '')
             parsed_data.append(row_contents)
 
         return parsed_data
