@@ -1,4 +1,5 @@
 import urllib.request
+from datetime import datetime
 import json
 from bs4 import BeautifulSoup
 
@@ -58,7 +59,7 @@ class Stock:
         end_date -- String representation of the closing historical date to retrive prices
 
         """
-# NEED TO MAKE DATE FORMAT CONSISTENT BETWEEN BOTH METHODS OF GETTING DATA
+
         if self.valid is True:
             historic_url = 'https://www.google.com/finance/historical?&q={0}&startdate={1}&enddate={2}&output=csv'.format(self.ticker, start_date, end_date)
             response_data = []
@@ -67,7 +68,7 @@ class Stock:
                     page = response.read().decode('utf-8-sig').splitlines()
 
                 headers = page[0].split(',')
-                response_data = self._parse_historical_data(page[1:], headers, ',')
+                response_data = self._parse_hist_data(page[1:], headers, ',')
 
             except urllib.error.HTTPError:
 
@@ -83,7 +84,8 @@ class Stock:
                     text = table.text.split('\n\n')
                     headers = text[1].split('\n')
 
-                    response_data = response_data + self._parse_historical_data(text[2:], headers, '\n')
+                    response_data = response_data \
+                        + self._parse_hist_data(text[2:], headers, '\n', date_format='%b %d, %Y')
 
                     if len(response_data) < 200:
                         more_data = False
@@ -118,13 +120,13 @@ class Stock:
         return (company_name, description)
 
     @staticmethod
-    def _parse_historical_data(data, headers, delimiter):
+    def _parse_hist_data(data, headers, delimiter, date_format='%d-%b-%y'):
 
         parsed_data = []
         for row in data:
             cell = row.split(delimiter)
             row_contents = {}
-            row_contents[headers[0]] = cell[0]
+            row_contents[headers[0]] = datetime.strptime(cell[0], date_format)
             row_contents[headers[1]] = cell[1]
             row_contents[headers[2]] = cell[2]
             row_contents[headers[3]] = cell[3]
