@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='googlefinance',
-      version='0.2',
+      version='0.3',
       description='Package to retrive current quotes, historical prices, and descriptive details from Google Finance.',
       author='Alex Curto',
       license='MIT',
