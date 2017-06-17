@@ -2,6 +2,7 @@ import urllib.request
 from datetime import datetime
 import json
 from bs4 import BeautifulSoup
+import requests
 
 DESCRIPTIVE_KEYS = {
     'id': 'ID',
@@ -95,6 +96,43 @@ class Stock:
                         start = start + 200
 
             return response_data
+
+    def get_stock_news(self):
+
+        """function will scrape google news to pull relelvant news stories
+
+        arguments:
+            ticker (string): ticker symbol to pull company news about
+        """
+
+        url = 'https://www.google.com/finance/company_news?q={0}&start=0&num=20'.format(self.ticker)
+        try:
+            res = requests.get(url)
+        except requests.exceptions.SSLError:
+            res = requests.get(url, verify=False)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        scraped_articles = []
+        articles = soup.find(id='news-main')
+
+        for article in articles.find_all(class_='g-section news sfe-break-bottom-16'):
+            header = article.find(class_='name')
+            details = header.select('a')
+            headline = details[0].getText()
+            url = details[0]['href']
+
+            byline = article.find(class_='byline')
+            src = byline.find(class_='src').getText()
+            article_date = byline.find(class_='date').getText()
+
+            scraped_articles.append(
+                {
+                    'headline': headline,
+                    'url': url,
+                    'src': src,
+                    'date': article_date
+                }
+            )
+        return scraped_articles
 
     def _get_desc_details(self):
         desc_url = 'https://www.google.com/finance?q='
