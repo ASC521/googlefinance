@@ -2,7 +2,6 @@ import urllib.request
 from datetime import datetime
 import json
 from bs4 import BeautifulSoup
-import requests
 
 DESCRIPTIVE_KEYS = {
     'id': 'ID',
@@ -22,14 +21,15 @@ class Stock:
     """Class contains functions to pull current and historical pricing data from Google Finance
 
     Methods:
-    get_quote: returns the most recent market quote of the stock
-    get_historical_prices: retrieves historical close prices
+        get_quote: returns the most recent market quote of the stock
+        get_historical_prices: retrieves historical close prices
+        get_stock_news: returns recent relevant company news
 
-    Variables:
-    ticker (String): market ticker
-    valid (boolean): ticker is a valid ticker
-    name (String): long company name
-    description (String): Brief description of company
+    Attributes:
+        ticker (String): market ticker
+        valid (boolean): ticker is a valid ticker
+        name (String): long company name
+        description (String): Brief description of company
 
     """
 
@@ -105,12 +105,14 @@ class Stock:
             ticker (string): ticker symbol to pull company news about
         """
 
+        if self.valid is False:
+            return "Invalid Stock"
+
         url = 'https://www.google.com/finance/company_news?q={0}&start=0&num=20'.format(self.ticker)
-        try:
-            res = requests.get(url)
-        except requests.exceptions.SSLError:
-            res = requests.get(url, verify=False)
-        soup = BeautifulSoup(res.text, 'html.parser')
+        with urllib.request.urlopen(url) as response:
+            res = response.read()
+
+        soup = BeautifulSoup(res, 'html.parser')
         scraped_articles = []
         articles = soup.find(id='news-main')
 
