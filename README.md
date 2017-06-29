@@ -5,6 +5,17 @@ Python package to scrape relevant data from Google Finance.  This package is abl
     from googlefinance import Stock
 
     aapl = Stock('AAPL')
+
+    company_name = aapl.name
+
+    # Response
+    'Apple Inc.'
+
+    company_description = aapl.description
+
+    # Response
+    'Apple Inc. (Apple) designs, manufactures and markets mobile communication and media devices, personal computers, and portable digital music players, and a variety of related software, services, peripherals, networking solutions, and third-party digital content and applications. The Company's products and services include iPhone, iPad, Mac, iPod, Apple TV, a portfolio of consumer and professional software applications, the iOS and OS X operating systems, iCloud, and a variety of accessory, service and support offerings. The Company also delivers digital content and applications through the iTunes Store, App StoreSM, iBookstoreSM, and Mac App Store. The Company distributes its products worldwide through its retail stores, online stores, and direct sales force, as well as through third-party cellular network carriers, wholesalers, retailers, and value-added resellers. In February 2012, the Company acquired app-search engine Chomp.'
+
     quote = aapl.get_quote()
 
     # Response
