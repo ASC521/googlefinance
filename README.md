@@ -9,4 +9,4 @@ Python package to scrape relevant data from Google Finance.  This package is abl
 
     hist_prices = aapl.get_historical_prices('5/30/2017', '6/30/2017')
 
-    news = aaple.get_stock_news()
+    news = aapl.get_stock_news()
