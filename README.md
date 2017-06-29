@@ -19,7 +19,7 @@ Python package to scrape relevant data from Google Finance.  This package is abl
         'PreviousCloseFix': '145.83'
     }
 
-    hist_prices = aapl.get_historical_prices('4/28/2017', '5/30/2017')
+    hist_prices = aapl.get_historical_prices('5/24/2017', '5/31/2017')
 
     # Response
     [
