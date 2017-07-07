@@ -1,4 +1,5 @@
 import urllib.request
+from urllib.error import HTTPError
 from datetime import datetime
 import json
 from bs4 import BeautifulSoup
@@ -36,7 +37,7 @@ class Stock:
     def __init__(self, ticker):
 
         self.ticker = ticker
-        self.valid = True
+        self.valid = self._validate_ticker()
         self.name, self.description = self._get_desc_details()
 
     def get_quote(self):
@@ -46,9 +47,9 @@ class Stock:
         quote_url = 'http://finance.google.com/finance/info?client=ig'
 
         if self.valid:
-            quote_response = urllib.request.urlopen(quote_url + '&q=' + self.ticker)
-            quotes = quote_response.read().decode('ascii', 'ignore').replace('\n', '')[3:]
-            return self._replace_keys(json.loads(quotes))
+            with urllib.request.urlopen(quote_url + '&q=' + self.ticker) as quote_response:
+                quotes = quote_response.read().decode('ascii', 'ignore').replace('\n', '')[3:]
+                return self._replace_keys(json.loads(quotes))
 
 
     def get_historical_prices(self, start_date, end_date):
@@ -139,13 +140,11 @@ class Stock:
     def _get_desc_details(self):
         desc_url = 'https://www.google.com/finance?q='
         try:
-            response = urllib.request.urlopen(desc_url + self.ticker)
+            with urllib.request.urlopen(desc_url + self.ticker) as response:
+                soup = BeautifulSoup(response.read(), 'html.parser')
         except urllib.error.HTTPError as error:
             self.valid = False
             print(error.reason)
-
-        page = response.read()
-        soup = BeautifulSoup(page, 'html.parser')
 
         try:
             title = soup.title.text
@@ -159,6 +158,15 @@ class Stock:
             description = 'Description Unavailable'
 
         return (company_name, description)
+
+    def _validate_ticker(self):
+        url = 'http://finance.google.com/finance/info?client=ig'
+
+        try:
+            with urllib.request.urlopen(url + '&q=' + self.ticker) as _:
+                return True
+        except HTTPError as _:
+            return False
 
     @staticmethod
     def _parse_hist_data(data, headers, delimiter, date_format='%d-%b-%y'):
