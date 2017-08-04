@@ -1,4 +1,4 @@
-import urllib.request
+import urllib.request as request
 from urllib.error import HTTPError
 from datetime import datetime
 import json
@@ -50,7 +50,7 @@ class Stock:
                     ).format(self.ticker)
 
         if self.valid:
-            with urllib.request.urlopen(quote_url) as quote_response:
+            with request.urlopen(quote_url) as quote_response:
                 resp = quote_response.read()
                 quotes = resp.decode('ascii', 'ignore').replace('\n', '')[3:]
                 return self._replace_keys(json.loads(quotes))
@@ -77,13 +77,13 @@ class Stock:
                            ).format(self.ticker, start_date, end_date)
             response_data = []
             try:
-                with urllib.request.urlopen(historic_url) as response:
+                with request.urlopen(historic_url) as response:
                     page = response.read().decode('utf-8-sig').splitlines()
 
                 headers = page[0].split(',')
                 response_data = self._parse_hist_data(page[1:], headers, ',')
 
-            except urllib.error.HTTPError:
+            except HTTPError:
 
                 more_data = True
                 start = 0
@@ -95,7 +95,7 @@ class Stock:
                                     + "&num=200"
                                     + "&start={3}"
                                    ).format(self.ticker, start_date, end_date, start)
-                    with urllib.request.urlopen(historic_url) as response:
+                    with request.urlopen(historic_url) as response:
                         page = response.read()
 
                     soup = BeautifulSoup(page, 'html.parser')
@@ -136,7 +136,7 @@ class Stock:
                + "&start=0"
                + "&num=20"
               ).format(self.ticker)
-        with urllib.request.urlopen(url) as response:
+        with request.urlopen(url) as response:
             res = response.read()
 
         soup = BeautifulSoup(res, 'html.parser')
@@ -166,9 +166,9 @@ class Stock:
     def _get_desc_details(self):
         desc_url = 'https://www.google.com/finance?q='
         try:
-            with urllib.request.urlopen(desc_url + self.ticker) as response:
+            with request.urlopen(desc_url + self.ticker) as response:
                 soup = BeautifulSoup(response.read(), 'html.parser')
-        except urllib.error.HTTPError as error:
+        except HTTPError as error:
             self.valid = False
             print(error.reason)
 
@@ -189,7 +189,7 @@ class Stock:
         url = 'http://finance.google.com/finance/info?client=ig'
 
         try:
-            with urllib.request.urlopen(url + '&q=' + self.ticker) as _:
+            with request.urlopen(url + '&q=' + self.ticker) as _:
                 return True
         except HTTPError as _:
             return False
