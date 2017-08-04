@@ -19,7 +19,8 @@ DESCRIPTIVE_KEYS = {
 
 class Stock:
 
-    """Class contains functions to pull current and historical pricing data from Google Finance
+    """Class contains functions to pull current and historical pricing data from
+        Google Finance
 
     Methods:
         get_quote: returns the most recent market quote of the stock
@@ -44,11 +45,14 @@ class Stock:
 
         """Retrieves most recent stock price"""
 
-        quote_url = 'http://finance.google.com/finance/info?client=ig'
+        quote_url = ("http://finance.google.com/finance/info?client=ig"
+                     + "&q={}"
+                    ).format(self.ticker)
 
         if self.valid:
-            with urllib.request.urlopen(quote_url + '&q=' + self.ticker) as quote_response:
-                quotes = quote_response.read().decode('ascii', 'ignore').replace('\n', '')[3:]
+            with urllib.request.urlopen(quote_url) as quote_response:
+                resp = quote_response.read()
+                quotes = resp.decode('ascii', 'ignore').replace('\n', '')[3:]
                 return self._replace_keys(json.loads(quotes))
 
 
@@ -57,13 +61,20 @@ class Stock:
         """Class retrives historical stock prices between the two dates provided
 
         arguments:
-        start_date -- String representation of the opening historical date to retrieve prices
-        end_date -- String representation of the closing historical date to retrive prices
+        start_date -- String representation of the opening historical date to
+            retrieve prices
+        end_date -- String representation of the closing historical date to
+            retrive prices
 
         """
 
         if self.valid is True:
-            historic_url = 'https://www.google.com/finance/historical?&q={0}&startdate={1}&enddate={2}&output=csv'.format(self.ticker, start_date, end_date)
+            historic_url = ("https://www.google.com/finance/historical?"
+                            + "&q={0}"
+                            + "&startdate={1}"
+                            + "&enddate={2}"
+                            + "&output=csv"
+                           ).format(self.ticker, start_date, end_date)
             response_data = []
             try:
                 with urllib.request.urlopen(historic_url) as response:
@@ -77,7 +88,13 @@ class Stock:
                 more_data = True
                 start = 0
                 while more_data:
-                    historic_url = 'https://www.google.com/finance/historical?&q={0}&startdate={1}&enddate={2}&num=200&start={3}'.format(self.ticker, start_date, end_date, start)
+                    historic_url = ("https://www.google.com/finance/historical?"
+                                    + "&q={0}"
+                                    + "&startdate={1}"
+                                    + "&enddate={2}"
+                                    + "&num=200"
+                                    + "&start={3}"
+                                   ).format(self.ticker, start_date, end_date, start)
                     with urllib.request.urlopen(historic_url) as response:
                         page = response.read()
 
@@ -86,8 +103,13 @@ class Stock:
                     text = table.text.split('\n\n')
                     headers = text[1].split('\n')
 
-                    response_data = response_data \
-                        + self._parse_hist_data(text[2:], headers, '\n', date_format='%b %d, %Y')
+                    response_data = (response_data
+                                     + self._parse_hist_data(
+                                         text[2:],
+                                         headers,
+                                         '\n',
+                                         date_format='%b %d, %Y',
+                                         ))
 
                     if len(response_data) < 200:
                         more_data = False
@@ -109,7 +131,11 @@ class Stock:
         if self.valid is False:
             return "Invalid Stock"
 
-        url = 'https://www.google.com/finance/company_news?q={0}&start=0&num=20'.format(self.ticker)
+        url = ("https://www.google.com/finance/company_news?"
+               + "q={0}"
+               + "&start=0"
+               + "&num=20"
+              ).format(self.ticker)
         with urllib.request.urlopen(url) as response:
             res = response.read()
 
