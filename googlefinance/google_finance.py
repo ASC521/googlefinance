@@ -37,10 +37,13 @@ class Stock:
     ----------
         ticker : str
             market ticker
+
         valid : bool
             ticker is a valid ticker
+
         name : str
             long company name
+
         description : str
             Brief description of company
 
@@ -72,9 +75,10 @@ class Stock:
         """Class retrives historical stock prices between the two dates provided
 
         Parameters
-        ----------
+        ------------
         start_date : str
             Older historical date to retrieve prices, '2017-06-30'
+
         end_date : str
             More recent historical date to retrive prices, '2017-07-31'
 
