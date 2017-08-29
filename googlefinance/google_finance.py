@@ -22,16 +22,27 @@ class Stock:
     """Class contains functions to pull current and historical pricing data from
         Google Finance
 
-    Methods:
+    Functions
+    ---------
         get_quote: returns the most recent market quote of the stock
         get_historical_prices: retrieves historical close prices
         get_stock_news: returns recent relevant company news
 
-    Attributes:
-        ticker (String): market ticker
-        valid (boolean): ticker is a valid ticker
-        name (String): long company name
-        description (String): Brief description of company
+    Parameters
+    ----------
+    ticker : str
+        exchange ticker of public traded company
+
+    Attributes
+    ----------
+        ticker : str
+            market ticker
+        valid : bool
+            ticker is a valid ticker
+        name : str
+            long company name
+        description : str
+            Brief description of company
 
     """
 
@@ -60,11 +71,12 @@ class Stock:
 
         """Class retrives historical stock prices between the two dates provided
 
-        arguments:
-        start_date -- String representation of the opening historical date to
-            retrieve prices
-        end_date -- String representation of the closing historical date to
-            retrive prices
+        Parameters
+        ----------
+        start_date : str
+            Older historical date to retrieve prices, '2017-06-30'
+        end_date : str
+            More recent historical date to retrive prices, '2017-07-31'
 
         """
 
@@ -122,11 +134,7 @@ class Stock:
 
     def get_stock_news(self):
 
-        """function will scrape google news to pull relelvant news stories
-
-        arguments:
-            ticker (string): ticker symbol to pull company news about
-        """
+        """function will scrape google news to pull relelvant news stories"""
 
         if self.valid is False:
             return "Invalid Stock"
