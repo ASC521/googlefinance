@@ -198,7 +198,7 @@ class Stock:
         return (company_name, description)
 
     def _validate_ticker(self):
-        url = 'http://finance.google.com/finance/info?client=ig'
+        url = 'http://finance.google.com/finance?'
 
         try:
             with request.urlopen(url + '&q=' + self.ticker) as _:
