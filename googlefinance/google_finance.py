@@ -85,7 +85,7 @@ class Stock:
         """
 
         if self.valid is True:
-            historic_url = ("https://www.google.com/finance/historical?"
+            historic_url = ("https://finance.google.com/finance/historical?"
                             + "&q={0}"
                             + "&startdate={1}"
                             + "&enddate={2}"
@@ -104,7 +104,7 @@ class Stock:
                 more_data = True
                 start = 0
                 while more_data:
-                    historic_url = ("https://www.google.com/finance/historical?"
+                    historic_url = ("https://finance.google.com/finance/historical?"
                                     + "&q={0}"
                                     + "&startdate={1}"
                                     + "&enddate={2}"
@@ -143,7 +143,7 @@ class Stock:
         if self.valid is False:
             return "Invalid Stock"
 
-        url = ("https://www.google.com/finance/company_news?"
+        url = ("https://finance.google.com/finance/company_news?"
                + "q={0}"
                + "&start=0"
                + "&num=20"
@@ -176,29 +176,30 @@ class Stock:
         return scraped_articles
 
     def _get_desc_details(self):
-        desc_url = 'https://www.google.com/finance?q='
+        desc_url = 'https://finance.google.com/finance?q='
         try:
             with request.urlopen(desc_url + self.ticker) as response:
                 soup = BeautifulSoup(response.read(), 'html.parser')
+
+            try:
+                title = soup.title.text
+                company_name = title[:title.find(':')]
+            except AttributeError:
+                company_name = 'Company Name Unavailable'
+
+            try:
+                description = soup.find('div', class_='companySummary').text
+            except AttributeError:
+                description = 'Description Unavailable'
         except HTTPError as error:
             self.valid = False
             print(error.reason)
-
-        try:
-            title = soup.title.text
-            company_name = title[:title.find(':')]
-        except AttributeError:
-            company_name = 'Company Name Unavailable'
-
-        try:
-            description = soup.find('div', class_='companySummary').text
-        except AttributeError:
-            description = 'Description Unavailable'
+            return ('Unavailable', 'Unavailable')
 
         return (company_name, description)
 
     def _validate_ticker(self):
-        url = 'http://finance.google.com/finance?'
+        url = 'https://finance.google.com/finance?'
 
         try:
             with request.urlopen(url + '&q=' + self.ticker) as _:
